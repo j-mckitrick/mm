@@ -17,8 +17,9 @@ debug = config.logger.debug
 
 class PluginConnection(object):
 
-    currently_supported_clients = ['SUBLIME_TEXT_2', 'SUBLIME_TEXT_3', 'BRACKETS']
-    PluginClients = enum(SUBLIME_TEXT_2='SUBLIME_TEXT_2', SUBLIME_TEXT_3='SUBLIME_TEXT_3', BRACKET='BRACKETS', NOTEPAD_PLUS_PLUS='NOTEPAD_PLUS_PLUS', TEXTMATE='TEXTMATE')
+    currently_supported_clients = ['SUBLIME_TEXT_2', 'SUBLIME_TEXT_3', 'BRACKETS', 'EMACS']
+    PluginClients = enum(SUBLIME_TEXT_2='SUBLIME_TEXT_2', SUBLIME_TEXT_3='SUBLIME_TEXT_3', BRACKET='BRACKETS', NOTEPAD_PLUS_PLUS='NOTEPAD_PLUS_PLUS', TEXTMATE='TEXTMATE',
+                         EMACS='EMACS')
     
     def __init__(self, params={}, **kwargs):
         params = dict(params.items() + kwargs.items()) #join params and kwargs
@@ -163,6 +164,8 @@ class PluginConnection(object):
             sublime_ver = "Sublime Text 3"
         elif self.plugin_client == self.PluginClients.SUBLIME_TEXT_2:
             sublime_ver = "Sublime Text 2"
+        elif self.plugin_client == self.PluginClients.EMACS:
+            sublime_ver = "Sublime Text 3"
         
         if sys.platform == 'darwin':
             if 'SUBLIME_TEXT' in self.plugin_client:
@@ -178,6 +181,11 @@ class PluginConnection(object):
                     return os.path.join(os.path.expanduser('~'),"Library","Application Support","Brackets","extensions","user","mavensmate-user-settings.json")
                 else:
                     return os.path.join(os.path.expanduser('~'),"Library","Application Support","Brackets","extensions","user","mavensmate","settings.json")
+            elif 'EMACS' in self.plugin_client:
+                if type == "User":
+                    return os.path.join(os.path.expanduser('~'),"Library","Application Support",sublime_ver,"Packages",type,"mavensmate.sublime-settings")
+                else:
+                    return os.path.join(os.path.expanduser('~'),"Library","Application Support",sublime_ver,"Packages","MavensMate","mavensmate.sublime-settings")
         elif sys.platform == 'win32' or sys.platform == 'cygwin':
             return os.path.join(os.environ['APPDATA'], sublime_ver, 'Packages',type,obj)
         elif sys.platform == 'linux2':
